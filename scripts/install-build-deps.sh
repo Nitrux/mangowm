@@ -24,7 +24,7 @@ $APT_COMMAND install -y --no-install-recommends \
     libpixman-1-dev \
     libpcre2-dev \
     libscenefx-0.5 \
-    libscenefx-dev \
+    libscenefx-0.5-dev \
     libseat-dev \
     libwayland-dev \
     libwlroots-0.20-dev \
