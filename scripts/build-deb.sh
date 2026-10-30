@@ -14,9 +14,12 @@ mkdir -p build/source build/package-root/DEBIAN
 git clone --depth 1 --branch "$UPSTREAM_VERSION" \
     https://github.com/mangowm/mango.git build/source/mango
 
-meson setup build/meson build/source/mango \
-    --prefix=/usr \
-    --buildtype=release
+MESON_ARGS=(--prefix=/usr --buildtype=release)
+if [ "$(dpkg-architecture -qDEB_BUILD_ARCH)" = "amd64" ]; then
+    MESON_ARGS+=( -Dc_args=-march=x86-64-v3 -Dc_link_args=-march=x86-64-v3 )
+fi
+
+meson setup build/meson build/source/mango "${MESON_ARGS[@]}"
 ninja -C build/meson
 DESTDIR="$PWD/build/package-root" meson install -C build/meson
 install -D -m644 build/source/mango/LICENSE \
