@@ -9,7 +9,7 @@ PACKAGE_VERSION="${PACKAGE_VERSION:-0.18.4-1}"
 TARGET_ARCH="${TARGET_ARCH:-$(dpkg --print-architecture)}"
 UPSTREAM_VERSION="0.18.4"
 
-mkdir -p build/source build/package-root/DEBIAN
+mkdir -p build/source build/package-root/DEBIAN build/debian
 
 git clone --depth 1 --branch "$UPSTREAM_VERSION" \
     https://github.com/mangowm/mango.git build/source/mango
@@ -25,7 +25,23 @@ DESTDIR="$PWD/build/package-root" meson install -C build/meson
 install -D -m644 build/source/mango/LICENSE \
     build/package-root/usr/share/doc/mangowm/copyright
 
-SHARED_DEPENDENCIES=$(dpkg-shlibdeps -O build/package-root/usr/bin/mango \
+cat > build/debian/control <<'EOF_CONTROL'
+Source: mangowm
+Section: x11
+Priority: optional
+Maintainer: Nitrux Latinoamericana S.C. <hello@nxos.org>
+
+Package: mangowm
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Wayland compositor based on dwl
+ Mango is a dynamic tiling Wayland compositor.
+EOF_CONTROL
+
+SHARED_DEPENDENCIES=$(cd build && dpkg-shlibdeps -O \
+    package-root/usr/bin/mango \
+    package-root/usr/bin/mmsg \
+    package-root/usr/bin/mangonag \
     | sed -n 's/^shlibs:Depends=//p')
 
 cat > build/package-root/DEBIAN/control <<EOF_CONTROL
