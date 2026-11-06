@@ -5,9 +5,9 @@
 
 set -euo pipefail
 
-PACKAGE_VERSION="${PACKAGE_VERSION:-0.18.4-1}"
+PACKAGE_VERSION="${PACKAGE_VERSION:?PACKAGE_VERSION must be supplied by the workflow input}"
 TARGET_ARCH="${TARGET_ARCH:-$(dpkg --print-architecture)}"
-UPSTREAM_VERSION="0.18.4"
+UPSTREAM_VERSION="${PACKAGE_VERSION%%-*}"
 
 mkdir -p build/source build/package-root/DEBIAN build/debian
 
